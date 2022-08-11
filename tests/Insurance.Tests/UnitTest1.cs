@@ -12,19 +12,23 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Xunit;
+using Moq;
+using Insurance.Api.Services;
 
 namespace Insurance.Tests
 {
     public class InsuranceTests : IClassFixture<ControllerTestFixture>
     {
         private readonly ControllerTestFixture _fixture;
+        private readonly Mock<IInsuranceService> InsuranceServiceMock;
         public InsuranceTests(ControllerTestFixture fixture)
         {
             _fixture = fixture;
+            InsuranceServiceMock = new Mock<IInsuranceService>();
         }
 
         [Fact]
-        public void CalculateInsurance_GivenSalesPriceBelow500Euros_ShouldRequireNoInsurance()
+        public void Product_GivenSalesPriceBelow500Euros_ShouldRequireNoInsurance()
         {
             //Arrange
             const float expectedInsuranceValue = 0;
@@ -35,18 +39,18 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.Product(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
         [Fact]
-        public void CalculateInsurance_GivenSalesPriceBetween500And2000Euros_ShouldAdd1000EurosToInsuranceCost()
+        public void Product_GivenSalesPriceBetween500And2000Euros_ShouldAdd1000EurosToInsuranceCost()
         {
             //Arrange
             const float expectedInsuranceValue = 1000;
@@ -57,18 +61,18 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.Product(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
         [Fact]
-        public void CalculateInsurance_GivenSalesPriceAbove2000Euros_ShouldAdd2000EurosToInsuranceCost()
+        public void Product_GivenSalesPriceAbove2000Euros_ShouldAdd2000EurosToInsuranceCost()
         {
             //Arrange
             const float expectedInsuranceValue = 2000;
@@ -80,18 +84,18 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.Product(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
         [Fact]
-        public void CalculateInsurance_GivenSalesPriceBelow500EurosAndSmartphoneOrLaptop_ShouldAdd500EurosToInsuranceCost()
+        public void Product_GivenSalesPriceBelow500EurosAndSmartphoneOrLaptop_ShouldAdd500EurosToInsuranceCost()
         {
             //Arrange
             const float expectedInsuranceValue = 500;
@@ -102,18 +106,18 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.Product(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
         [Fact]
-        public void CalculateInsurance_GivenSalesPriceBetween500And2000EurosAndSmartphoneOrLaptop_ShouldAdd1500EurosToInsuranceCost()
+        public void Product_GivenSalesPriceBetween500And2000EurosAndSmartphoneOrLaptop_ShouldAdd1500EurosToInsuranceCost()
         {
             //Arrange
             const float expectedInsuranceValue = 1500;
@@ -124,18 +128,18 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.Product(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
         [Fact]
-        public void CalculateInsurance_GivenSalesPriceAbove2000EurosAndSmartphoneOrLaptop_ShouldAdd2500EurosToInsuranceCost()
+        public void Product_GivenSalesPriceAbove2000EurosAndSmartphoneOrLaptop_ShouldAdd2500EurosToInsuranceCost()
         {
             //Arrange
             const float expectedInsuranceValue = 2500;
@@ -146,18 +150,18 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.Product(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
         [Fact]
-        public void CalculateInsurance_GivenSalesPriceBelow500EurosAndCantBeInsured_ShouldRequireNoInsurance()
+        public void Product_GivenSalesPriceBelow500EurosAndCantBeInsured_ShouldRequireNoInsurance()
         {
             //Arrange
             const float expectedInsuranceValue = 0;
@@ -168,18 +172,18 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.Product(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
         [Fact]
-        public void CalculateInsurance_GivenSalesPriceBetween500And2000EurosAndCantBeInsured_ShouldRequireNoInsurance()
+        public void Product_GivenSalesPriceBetween500And2000EurosAndCantBeInsured_ShouldRequireNoInsurance()
         {
             //Arrange
             const float expectedInsuranceValue = 0;
@@ -190,18 +194,18 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.Product(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
         [Fact]
-        public void CalculateInsurance_GivenSalesPriceAbove2000EurosAndCantBeInsured_ShouldRequireNoInsurance()
+        public void Product_GivenSalesPriceAbove2000EurosAndCantBeInsured_ShouldRequireNoInsurance()
         {
             //Arrange
             const float expectedInsuranceValue = 0;
@@ -212,18 +216,18 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.Product(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
         [Fact]
-        public void CalculateInsurance_GivenSalesPriceBelow500EurosAndCantBeInsuredOrder_ShouldRequireNoInsurance()
+        public void Product_GivenSalesPriceBelow500EurosAndCantBeInsuredOrder_ShouldRequireNoInsurance()
         {
             //Arrange
             const float expectedInsuranceValue = 0;
@@ -234,18 +238,18 @@ namespace Insurance.Tests
             dto.Add(new InsuranceDto { ProductId = 6 });
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.ProductOrder(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
         [Fact]
-        public void CalculateInsurance_GivenSalesPriceBetween500and2000EurosAndCantBeInsuredOrder_ShouldRequireNoInsurance()
+        public void Product_GivenSalesPriceBetween500and2000EurosAndCantBeInsuredOrder_ShouldRequireNoInsurance()
         {
             //Arrange
             const float expectedInsuranceValue = 0;
@@ -256,18 +260,18 @@ namespace Insurance.Tests
             dto.Add(new InsuranceDto { ProductId = 62 });
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.ProductOrder(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
         [Fact]
-        public void CalculateInsurance_GivenSalesPriceAbove2000EurosAndCantBeInsuredOrder_ShouldRequireNoInsurance()
+        public void Product_GivenSalesPriceAbove2000EurosAndCantBeInsuredOrder_ShouldRequireNoInsurance()
         {
             //Arrange
             const float expectedInsuranceValue = 0;
@@ -278,18 +282,18 @@ namespace Insurance.Tests
             dto.Add(new InsuranceDto { ProductId = 63 });
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.ProductOrder(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
         [Fact]
-        public void CalculateInsurance_GivenSalesPriceBelow500EurosOrder_ShouldRequireNoInsurance()
+        public void Product_GivenSalesPriceBelow500EurosOrder_ShouldRequireNoInsurance()
         {
             //Arrange
             const float expectedInsuranceValue = 0;
@@ -301,18 +305,18 @@ namespace Insurance.Tests
             dto.Add(new InsuranceDto { ProductId = 1 });
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.ProductOrder(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
         [Fact]
-        public void CalculateInsurance_GivenSalesPriceBetween500and2000EurosOrder_ShouldAddXTimes1000ToInsurance()
+        public void Product_GivenSalesPriceBetween500and2000EurosOrder_ShouldAddXTimes1000ToInsurance()
         {
             //Arrange
             const float expectedInsuranceValue = 4000;
@@ -324,18 +328,18 @@ namespace Insurance.Tests
             dto.Add(new InsuranceDto { ProductId = 12 });
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.ProductOrder(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
         [Fact]
-        public void CalculateInsurance_GivenSalesPriceAbove2000EurosOrder_ShouldAddXTimes2000ToInsurance()
+        public void Product_GivenSalesPriceAbove2000EurosOrder_ShouldAddXTimes2000ToInsurance()
         {
             //Arrange
             const float expectedInsuranceValue = 8000;
@@ -359,18 +363,18 @@ namespace Insurance.Tests
             });
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.ProductOrder(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
         [Fact]
-        public void CalculateInsurance_GivenSalesPriceBelow500EurosAndSmartphoneOrLaptopOrder_ShouldAddYTimes500ToInsurance()
+        public void Product_GivenSalesPriceBelow500EurosAndSmartphoneOrLaptopOrder_ShouldAddYTimes500ToInsurance()
         {
             //Arrange
             const float expectedInsuranceValue = 2000;
@@ -382,18 +386,18 @@ namespace Insurance.Tests
             dto.Add(new InsuranceDto { ProductId = 5 });
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.ProductOrder(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
         [Fact]
-        public void CalculateInsurance_GivenSalesPriceBetween500and2000EurosAndSmartphoneOrLaptopOrder_ShouldAddXTimes1000PlusYTimes500ToInsurance()
+        public void Product_GivenSalesPriceBetween500and2000EurosAndSmartphoneOrLaptopOrder_ShouldAddXTimes1000PlusYTimes500ToInsurance()
         {
             //Arrange
             const float expectedInsuranceValue = 6000;
@@ -405,18 +409,18 @@ namespace Insurance.Tests
             dto.Add(new InsuranceDto { ProductId = 52 });
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.ProductOrder(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
         [Fact]
-        public void CalculateInsurance_GivenSalesPriceAbove2000EurosAndSmartphoneOrLaptopOrder_ShouldAddXTimes2000PlusYTimes500ToInsurance()
+        public void Product_GivenSalesPriceAbove2000EurosAndSmartphoneOrLaptopOrder_ShouldAddXTimes2000PlusYTimes500ToInsurance()
         {
             //Arrange
             const float expectedInsuranceValue = 10000;
@@ -440,19 +444,19 @@ namespace Insurance.Tests
             });
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.ProductOrder(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
         //ToDo: add unit tests for range of items in an order
         [Fact]
-        public void CalculateInsurance_GivenOneOfEachTypeOfItemInOrder_ShouldAdd6500ToInsurance()
+        public void Product_GivenOneOfEachTypeOfItemInOrder_ShouldAdd6500ToInsurance()
         {
             //Arrange
             const float expectedInsuranceValue = 15500;
@@ -485,19 +489,19 @@ namespace Insurance.Tests
             dto.Add(new InsuranceDto { ProductId = 83 }); //0
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.ProductOrder(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
         //ToDo: add unit tests for task 4
         [Fact]
-        public void CalculateInsurance_GivenOneDigitalCameraBelow500Euros_ShouldAdd500ToInsurance()
+        public void Product_GivenOneDigitalCameraBelow500Euros_ShouldAdd500ToInsurance()
         {
             //Arrange
             const float expectedInsuranceValue = 500;
@@ -508,17 +512,17 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.Product(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
         [Fact]
-        public void CalculateInsurance_GivenOneDigitalCameraBetween500and2000Euros_ShouldAdd1500ToInsurance()
+        public void Product_GivenOneDigitalCameraBetween500and2000Euros_ShouldAdd1500ToInsurance()
         {
             //Arrange
             const float expectedInsuranceValue = 1500;
@@ -529,17 +533,17 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.Product(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
         [Fact]
-        public void CalculateInsurance_GivenOneDigitalCameraAbove2000Euros_ShouldAdd2500ToInsurance()
+        public void Product_GivenOneDigitalCameraAbove2000Euros_ShouldAdd2500ToInsurance()
         {
             //Arrange
             const float expectedInsuranceValue = 2500;
@@ -550,17 +554,17 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.Product(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
         [Fact]
-        public void CalculateInsurance_GivenAtLEastOneDigitalCameraInOrder_ShouldAdd1500Plus500ToInsurance()
+        public void Product_GivenAtLEastOneDigitalCameraInOrder_ShouldAdd1500Plus500ToInsurance()
         {
             //Arrange
             const float expectedInsuranceValue = 2500;
@@ -572,19 +576,19 @@ namespace Insurance.Tests
             dto.Add(new InsuranceDto { ProductId = 1 }); //0
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.ProductOrder(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
 
         [Fact]
-        public async void CalculateInsurance_GivenSurcharge10PercentForGivenSalesPriceBelow500Euros_ShouldRequireNoInsuranceAsync()
+        public async void Product_GivenSurcharge10PercentForGivenSalesPriceBelow500Euros_ShouldRequireNoInsuranceAsync()
         {
             //Arrange
             const float expectedInsuranceValue = 0;
@@ -596,19 +600,19 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController();
-            await sut.AddSurcharge(dto);
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            await sut.Surcharge(dto);
+            var result = sut.Product(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
         [Fact]
-        public async void CalculateInsurance_GivenSurcharge10PercentForGivenSalesPriceBetween500And2000Euros_ShouldAdd1100EurosToInsuranceCostAsync()
+        public async void Product_GivenSurcharge10PercentForGivenSalesPriceBetween500And2000Euros_ShouldAdd1100EurosToInsuranceCostAsync()
         {
             //Arrange
             const float expectedInsuranceValue = 1100;
@@ -620,19 +624,19 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController();
-            await sut.AddSurcharge(dto);
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            await sut.Surcharge(dto);
+            var result = sut.Product(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
         [Fact]
-        public async void CalculateInsurance_GivenSurcharge10PercentForGivenSalesPriceAbove2000Euros_ShouldAdd2200EurosToInsuranceCost()
+        public async void Product_GivenSurcharge10PercentForGivenSalesPriceAbove2000Euros_ShouldAdd2200EurosToInsuranceCost()
         {
             //Arrange
             const float expectedInsuranceValue = 2200;
@@ -644,20 +648,20 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController();
-            await sut.AddSurcharge(dto);
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            await sut.Surcharge(dto);
+            var result = sut.Product(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
 
         [Fact]
-        public async void CalculateInsurance_GivenSurchargeMinus10PercentForGivenSalesPricePriceBelow500Euros_ShouldRequireNoInsuranceAsync()
+        public async void Product_GivenSurchargeMinus10PercentForGivenSalesPricePriceBelow500Euros_ShouldRequireNoInsuranceAsync()
         {
             //Arrange
             const float expectedInsuranceValue = 0;
@@ -669,18 +673,18 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController();
-            await sut.AddSurcharge(dto);
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            await sut.Surcharge(dto);
+            var result = sut.Product(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
         [Fact]
-        public async void CalculateInsurance_GivenSurchargeMinus10PercentForGivenSalesPriceBetween500And2000Euros_ShouldAdd900EurosToInsuranceCostAsync()
+        public async void Product_GivenSurchargeMinus10PercentForGivenSalesPriceBetween500And2000Euros_ShouldAdd900EurosToInsuranceCostAsync()
         {
             //Arrange
             const float expectedInsuranceValue = 900;
@@ -692,19 +696,19 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController();
-            await sut.AddSurcharge(dto);
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            await sut.Surcharge(dto);
+            var result = sut.Product(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
 
         [Fact]
-        public async void CalculateInsurance_GivenSurchargeMinus10PercentForGivenSalesPriceAbove2000Euros_ShouldAdd1800EurosToInsuranceCost()
+        public async void Product_GivenSurchargeMinus10PercentForGivenSalesPriceAbove2000Euros_ShouldAdd1800EurosToInsuranceCost()
         {
             //Arrange
             const float expectedInsuranceValue = 1800;
@@ -716,70 +720,22 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController();
-            await sut.AddSurcharge(dto);
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            await sut.Surcharge(dto);
+            var result = sut.Product(dto).Result;
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: result.Result
+                actual: float.Parse(result.ToString())
                 );
         }
-
+             
         [Fact]
-        public async void CalculateInsurance_GivenSurchargeBelowMinus100PercentForGivenSalesPriceBetween500And2000Euros_ShouldReturnError()
+        public async void Product_GivenInvalidProductId_ShouldReturnError()
         {
             //Arrange
-            const ApiResponseState StateCode = ApiResponseState.Error;
-            const ApiErrorCodeEnum ErrorCode = ApiErrorCodeEnum.ModelNotValid;
-
-            var dto = new InsuranceDto
-            {
-                ProductId = 92,
-                SurchargeRate = -105
-            };
-
-            //Act
-            var sut = new InsuranceController();
-            var result = await sut.AddSurcharge(dto);
-
-            //Assert
-            Assert.Equal(
-                expected: ErrorCode,
-                actual: result.ErrorCode
-                );
-        }
-
-        [Fact]
-        public async void CalculateInsurance_GivenSurchargeAbove100PercentForGivenSalesPriceAbove2000Euros_ShouldReturnError()
-        {
-            //Arrange
-            const ApiResponseState StateCode = ApiResponseState.Error;
-            const ApiErrorCodeEnum ErrorCode = ApiErrorCodeEnum.ModelNotValid;
-
-            var dto = new InsuranceDto
-            {
-                ProductId = 93,
-                SurchargeRate = 105
-            };
-
-            //Act
-            var sut = new InsuranceController();
-            var result = await sut.AddSurcharge(dto);
-
-            //Assert
-            Assert.Equal(
-                expected: ErrorCode,
-                actual: result.ErrorCode
-                );
-        }
-        [Fact]
-        public async void CalculateInsurance_GivenInvalidProductId_ShouldReturnError()
-        {
-            //Arrange
-            const ApiResponseState StateCode = ApiResponseState.Error;
-            const ApiErrorCodeEnum ErrorCode = ApiErrorCodeEnum.ProductNotFound;
+            const string expected = "Product type could not be found";
 
             var dto = new InsuranceDto
             {
@@ -787,21 +743,20 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController();
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            var result = sut.Product(dto).Result;
 
             //Assert
             Assert.Equal(
-                expected: ErrorCode,
-                actual: result.ErrorCode
+                expected: expected,
+                actual: result.ToString()
                 );
         }
         [Fact]
         public async void CalculateSurcharge_GivenInvalidProductId_ShouldReturnError()
         {
             //Arrange
-            const ApiResponseState StateCode = ApiResponseState.Error;
-            const ApiErrorCodeEnum ErrorCode = ApiErrorCodeEnum.ProductNotFound;
+            const string expected = "Product type could not be found";
 
             var dto = new InsuranceDto
             {
@@ -810,14 +765,14 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController();
-            await sut.AddSurcharge(dto);
-            var result = sut.CalculateInsurance(dto);
+            var sut = new InsuranceController(InsuranceServiceMock.Object);
+            await sut.Surcharge(dto);
+            var result = sut.Product(dto).Result;
 
             //Assert
             Assert.Equal(
-                expected: ErrorCode,
-                actual: result.ErrorCode
+                expected: expected,
+                actual: result.ToString()
                 );
         }
 

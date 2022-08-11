@@ -90,6 +90,10 @@ namespace Insurance.Api.Controllers
         public async Task<IActionResult> Surcharge([FromBody] InsuranceDto toInsure)
         {
             var productType = await _insuranceService.GetProductTypeAsync(toInsure);
+            if (productType.Status == ApiState.NotFound)
+            {
+                return NotFound("Product type could not be found");
+            }
             toInsure.ProductTypeHasInsurance = productType.Result.ProductTypeHasInsurance;
             toInsure.ProductTypeName = productType.Result.ProductTypeName;
 

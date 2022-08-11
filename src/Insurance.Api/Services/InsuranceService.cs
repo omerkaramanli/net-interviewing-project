@@ -11,6 +11,7 @@
         {
             _logger = logger;
             _httpClient = httpClient;
+            //HttpClient _httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5002") };
         }
 
         public async Task<ApiResponseModel<InsuranceDto>> GetProductTypeAsync(InsuranceDto insurance)
