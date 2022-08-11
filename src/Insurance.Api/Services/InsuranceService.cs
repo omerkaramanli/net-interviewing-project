@@ -7,7 +7,8 @@
 
         public InsuranceService(
             ILogger<InsuranceService> logger,
-            HttpClient httpClient)
+            HttpClient httpClient
+            )
         {
             _logger = logger;
             _httpClient = httpClient;
@@ -25,6 +26,8 @@
             }
 
             var productJson = await productResponse.Content.ReadAsStringAsync();
+            if (productJson == "")
+                return new ApiResponseModel<InsuranceDto>(ApiState.NotFound, "Product could not be found");
             var product = JsonSerializer.Deserialize<ProductsDto>(productJson);
 
             var productTypeResponse = await _httpClient.GetAsync(string.Format("/product_types/{0:G}", product.productTypeId));
@@ -33,6 +36,8 @@
                 return new ApiResponseModel<InsuranceDto>(ApiState.NotFound, "Product type could not be found");
             }
             var productTypeJson = await productTypeResponse.Content.ReadAsStringAsync();
+            if (productTypeJson == "")
+                return new ApiResponseModel<InsuranceDto>(ApiState.NotFound, "Product type could not be found");
             var productType = JsonSerializer.Deserialize<ProductTypesDto>(productTypeJson);
 
             insurance.ProductTypeName = productType.name;
@@ -42,6 +47,8 @@
 
             return new ApiResponseModel<InsuranceDto>(ApiState.Success, insurance);
         }
+
+
 
         public async Task AddSurchargeAsync(InsuranceDto insurance)
         {
@@ -73,6 +80,8 @@
                 return new ApiResponseModel<InsuranceDto>(ApiState.NotFound, "Sales price could not be found");
             }
             var productJson = await salesPriceResponse.Content.ReadAsStringAsync();
+            if (productJson == "")
+                return new ApiResponseModel<InsuranceDto>(ApiState.NotFound, "Sales price could not be found");
 
             var product = JsonSerializer.Deserialize<ProductsDto>(productJson);
 

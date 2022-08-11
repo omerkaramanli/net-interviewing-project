@@ -14,6 +14,14 @@ using Newtonsoft.Json;
 using Xunit;
 using Moq;
 using Insurance.Api.Services;
+using Microsoft.Extensions.Logging;
+using System.Net.Http;
+using System.Net;
+using Moq.Protected;
+using System.Threading;
+using System.Net.Mail;
+using Serilog.Core;
+using Insurance.Api;
 
 namespace Insurance.Tests
 {
@@ -32,6 +40,7 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 0;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new InsuranceDto
             {
@@ -39,13 +48,23 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.Product(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+            var productType = insuranceServiceMock.GetProductTypeAsync(dto);
+            dto.ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+            dto.ProductTypeName = productType.Result.Result.ProductTypeName;
+            var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto);
+            dto.SalesPrice = salesPrice.Result.Result.SalesPrice;
+            List<string> typeList = new List<string> {
+                    "Laptops",
+                    "Digital cameras",
+                    "Smartphones"};
+            var insuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto, typeList).Result.InsuranceValue;
+
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insuranceValue
                 );
         }
 
@@ -54,20 +73,30 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 1000;
-
+            var logger = new Mock<ILogger<InsuranceService>>();
             var dto = new InsuranceDto
             {
                 ProductId = 12,
             };
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.Product(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+            var productType = insuranceServiceMock.GetProductTypeAsync(dto);
+            dto.ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+            dto.ProductTypeName = productType.Result.Result.ProductTypeName;
+            var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto);
+            dto.SalesPrice = salesPrice.Result.Result.SalesPrice;
+            List<string> typeList = new List<string> {
+                    "Laptops",
+                    "Digital cameras",
+                    "Smartphones"};
+            var insuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto, typeList).Result.InsuranceValue;
+
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insuranceValue
                 );
         }
 
@@ -75,8 +104,8 @@ namespace Insurance.Tests
         public void Product_GivenSalesPriceAbove2000Euros_ShouldAdd2000EurosToInsuranceCost()
         {
             //Arrange
-            const float expectedInsuranceValue = 2000;
-
+            const float expectedInsuranceValue = 2200;
+            var logger = new Mock<ILogger<InsuranceService>>();
             var dto = new InsuranceDto
             {
                 ProductId = 13,
@@ -84,13 +113,23 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.Product(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+            var productType = insuranceServiceMock.GetProductTypeAsync(dto);
+            dto.ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+            dto.ProductTypeName = productType.Result.Result.ProductTypeName;
+            var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto);
+            dto.SalesPrice = salesPrice.Result.Result.SalesPrice;
+            List<string> typeList = new List<string> {
+                    "Laptops",
+                    "Digital cameras",
+                    "Smart phones"};
+            var insuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto, typeList).Result.InsuranceValue;
+
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insuranceValue
                 );
         }
 
@@ -99,20 +138,30 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 500;
-
+            var logger = new Mock<ILogger<InsuranceService>>();
             var dto = new InsuranceDto
             {
                 ProductId = 3,
             };
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.Product(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+            var productType = insuranceServiceMock.GetProductTypeAsync(dto);
+            dto.ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+            dto.ProductTypeName = productType.Result.Result.ProductTypeName;
+            var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto);
+            dto.SalesPrice = salesPrice.Result.Result.SalesPrice;
+            List<string> typeList = new List<string> {
+                    "Laptops",
+                    "Digital cameras",
+                    "Smartphones"};
+            var insuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto, typeList).Result.InsuranceValue;
+
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insuranceValue
                 );
         }
 
@@ -121,20 +170,30 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 1500;
-
+            var logger = new Mock<ILogger<InsuranceService>>();
             var dto = new InsuranceDto
             {
                 ProductId = 32,
             };
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.Product(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+            var productType = insuranceServiceMock.GetProductTypeAsync(dto);
+            dto.ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+            dto.ProductTypeName = productType.Result.Result.ProductTypeName;
+            var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto);
+            dto.SalesPrice = salesPrice.Result.Result.SalesPrice;
+            List<string> typeList = new List<string> {
+                    "Laptops",
+                    "Digital cameras",
+                    "Smartphones"};
+            var insuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto, typeList).Result.InsuranceValue;
+
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insuranceValue
                 );
         }
 
@@ -143,6 +202,7 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 2500;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new InsuranceDto
             {
@@ -150,13 +210,23 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.Product(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+            var productType = insuranceServiceMock.GetProductTypeAsync(dto);
+            dto.ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+            dto.ProductTypeName = productType.Result.Result.ProductTypeName;
+            var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto);
+            dto.SalesPrice = salesPrice.Result.Result.SalesPrice;
+            List<string> typeList = new List<string> {
+                    "Laptops",
+                    "Digital cameras",
+                    "Smartphones"};
+            var insuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto, typeList).Result.InsuranceValue;
+
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insuranceValue
                 );
         }
 
@@ -165,6 +235,7 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 0;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new InsuranceDto
             {
@@ -172,13 +243,23 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.Product(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+            var productType = insuranceServiceMock.GetProductTypeAsync(dto);
+            dto.ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+            dto.ProductTypeName = productType.Result.Result.ProductTypeName;
+            var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto);
+            dto.SalesPrice = salesPrice.Result.Result.SalesPrice;
+            List<string> typeList = new List<string> {
+                    "Laptops",
+                    "Digital cameras",
+                    "Smartphones"};
+            var insuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto, typeList).Result.InsuranceValue;
+
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insuranceValue
                 );
         }
 
@@ -187,6 +268,7 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 0;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new InsuranceDto
             {
@@ -194,13 +276,26 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.Product(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+            var productType = insuranceServiceMock.GetProductTypeAsync(dto);
+            dto.ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+            var insuranceValue = 0f;
+            if (dto.ProductTypeHasInsurance)
+            {
+                dto.ProductTypeName = productType.Result.Result.ProductTypeName;
+                var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto);
+                dto.SalesPrice = salesPrice.Result.Result.SalesPrice;
+                List<string> typeList = new List<string> {
+                    "Laptops",
+                    "Digital cameras",
+                    "Smartphones"};
+                insuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto, typeList).Result.InsuranceValue;
+            }
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insuranceValue
                 );
         }
 
@@ -209,6 +304,7 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 0;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new InsuranceDto
             {
@@ -216,13 +312,26 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.Product(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+            var productType = insuranceServiceMock.GetProductTypeAsync(dto);
+            dto.ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+            var insuranceValue = 0f;
+                if(dto.ProductTypeHasInsurance)
+            {
+                dto.ProductTypeName = productType.Result.Result.ProductTypeName;
+                var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto);
+                dto.SalesPrice = salesPrice.Result.Result.SalesPrice;
+                List<string> typeList = new List<string> {
+                    "Laptops",
+                    "Digital cameras",
+                    "Smartphones"};
+                 insuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto, typeList).Result.InsuranceValue;
+            }
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insuranceValue
                 );
         }
 
@@ -231,6 +340,7 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 0;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new List<InsuranceDto>();
             dto.Add(new InsuranceDto { ProductId = 2 });
@@ -238,13 +348,37 @@ namespace Insurance.Tests
             dto.Add(new InsuranceDto { ProductId = 6 });
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.ProductOrder(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+
+            List<string> typeList = new List<string> {
+                    StaticDataProvider.Laptops,
+                    StaticDataProvider.SmartPhones};
+
+            float insurance = 0f;
+            bool digitalCameraFound = false;
+
+            for (int i = 0; i < dto.Count; i++)
+            {
+                var productType = insuranceServiceMock.GetProductTypeAsync(dto[i]);
+                dto[i].ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+                dto[i].ProductTypeName = productType.Result.Result.ProductTypeName;
+
+                if (dto[i].ProductTypeHasInsurance)
+                {
+                    var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto[i]);
+                    dto[i].SalesPrice = salesPrice.Result.Result.SalesPrice;
+                    dto[i].InsuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto[i], typeList).Result.InsuranceValue;
+                }
+
+                insurance += dto[i].InsuranceValue;
+                if (!digitalCameraFound && dto[i].ProductTypeName.Equals(StaticDataProvider.DigitalCameras))
+                    insurance += StaticDataProvider.DigitalCamerasAdditionalInsuranceValue;
+            }
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insurance
                 );
         }
 
@@ -253,6 +387,7 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 0;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new List<InsuranceDto>();
             dto.Add(new InsuranceDto { ProductId = 22 });
@@ -260,13 +395,37 @@ namespace Insurance.Tests
             dto.Add(new InsuranceDto { ProductId = 62 });
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.ProductOrder(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+
+            List<string> typeList = new List<string> {
+                    StaticDataProvider.Laptops,
+                    StaticDataProvider.SmartPhones};
+
+            float insurance = 0f;
+            bool digitalCameraFound = false;
+
+            for (int i = 0; i < dto.Count; i++)
+            {
+                var productType = insuranceServiceMock.GetProductTypeAsync(dto[i]);
+                dto[i].ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+                dto[i].ProductTypeName = productType.Result.Result.ProductTypeName;
+
+                if (dto[i].ProductTypeHasInsurance)
+                {
+                    var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto[i]);
+                    dto[i].SalesPrice = salesPrice.Result.Result.SalesPrice;
+                    dto[i].InsuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto[i], typeList).Result.InsuranceValue;
+                }
+
+                insurance += dto[i].InsuranceValue;
+                if (!digitalCameraFound && dto[i].ProductTypeName.Equals(StaticDataProvider.DigitalCameras))
+                    insurance += StaticDataProvider.DigitalCamerasAdditionalInsuranceValue;
+            }
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insurance
                 );
         }
 
@@ -275,6 +434,7 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 0;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new List<InsuranceDto>();
             dto.Add(new InsuranceDto { ProductId = 23 });
@@ -282,13 +442,37 @@ namespace Insurance.Tests
             dto.Add(new InsuranceDto { ProductId = 63 });
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.ProductOrder(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+
+            List<string> typeList = new List<string> {
+                    StaticDataProvider.Laptops,
+                    StaticDataProvider.SmartPhones};
+
+            float insurance = 0f;
+            bool digitalCameraFound = false;
+
+            for (int i = 0; i < dto.Count; i++)
+            {
+                var productType = insuranceServiceMock.GetProductTypeAsync(dto[i]);
+                dto[i].ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+                dto[i].ProductTypeName = productType.Result.Result.ProductTypeName;
+
+                if (dto[i].ProductTypeHasInsurance)
+                {
+                    var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto[i]);
+                    dto[i].SalesPrice = salesPrice.Result.Result.SalesPrice;
+                    dto[i].InsuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto[i], typeList).Result.InsuranceValue;
+                }
+
+                insurance += dto[i].InsuranceValue;
+                if (!digitalCameraFound && dto[i].ProductTypeName.Equals(StaticDataProvider.DigitalCameras))
+                    insurance += StaticDataProvider.DigitalCamerasAdditionalInsuranceValue;
+            }
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insurance
                 );
         }
 
@@ -297,6 +481,7 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 0;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new List<InsuranceDto>();
             dto.Add(new InsuranceDto { ProductId = 1 });
@@ -305,13 +490,37 @@ namespace Insurance.Tests
             dto.Add(new InsuranceDto { ProductId = 1 });
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.ProductOrder(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+
+            List<string> typeList = new List<string> {
+                    StaticDataProvider.Laptops,
+                    StaticDataProvider.SmartPhones};
+
+            float insurance = 0f;
+            bool digitalCameraFound = false;
+
+            for (int i = 0; i < dto.Count; i++)
+            {
+                var productType = insuranceServiceMock.GetProductTypeAsync(dto[i]);
+                dto[i].ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+                dto[i].ProductTypeName = productType.Result.Result.ProductTypeName;
+
+                if (dto[i].ProductTypeHasInsurance)
+                {
+                    var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto[i]);
+                    dto[i].SalesPrice = salesPrice.Result.Result.SalesPrice;
+                    dto[i].InsuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto[i], typeList).Result.InsuranceValue;
+                }
+
+                insurance += dto[i].InsuranceValue;
+                if (!digitalCameraFound && dto[i].ProductTypeName.Equals(StaticDataProvider.DigitalCameras))
+                    insurance += StaticDataProvider.DigitalCamerasAdditionalInsuranceValue;
+            }
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insurance
                 );
         }
 
@@ -319,22 +528,47 @@ namespace Insurance.Tests
         public void Product_GivenSalesPriceBetween500and2000EurosOrder_ShouldAddXTimes1000ToInsurance()
         {
             //Arrange
-            const float expectedInsuranceValue = 4000;
+            const float expectedInsuranceValue = 4400;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new List<InsuranceDto>();
-            dto.Add(new InsuranceDto { ProductId = 12 });
-            dto.Add(new InsuranceDto { ProductId = 12 });
-            dto.Add(new InsuranceDto { ProductId = 12 });
-            dto.Add(new InsuranceDto { ProductId = 12 });
+            dto.Add(new InsuranceDto { ProductId = 112 });
+            dto.Add(new InsuranceDto { ProductId = 112 });
+            dto.Add(new InsuranceDto { ProductId = 112 });
+            dto.Add(new InsuranceDto { ProductId = 112 });
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.ProductOrder(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+
+            List<string> typeList = new List<string> {
+                    StaticDataProvider.Laptops,
+                    StaticDataProvider.SmartPhones};
+
+            float insurance = 0f;
+            bool digitalCameraFound = false;
+
+            for (int i = 0; i < dto.Count; i++)
+            {
+                var productType = insuranceServiceMock.GetProductTypeAsync(dto[i]);
+                dto[i].ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+                dto[i].ProductTypeName = productType.Result.Result.ProductTypeName;
+
+                if (dto[i].ProductTypeHasInsurance)
+                {
+                    var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto[i]);
+                    dto[i].SalesPrice = salesPrice.Result.Result.SalesPrice;
+                    dto[i].InsuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto[i], typeList).Result.InsuranceValue;
+                }
+
+                insurance += dto[i].InsuranceValue;
+                if (!digitalCameraFound && dto[i].ProductTypeName.Equals(StaticDataProvider.DigitalCameras))
+                    insurance += StaticDataProvider.DigitalCamerasAdditionalInsuranceValue;
+            }
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insurance
                 );
         }
 
@@ -342,34 +576,59 @@ namespace Insurance.Tests
         public void Product_GivenSalesPriceAbove2000EurosOrder_ShouldAddXTimes2000ToInsurance()
         {
             //Arrange
-            const float expectedInsuranceValue = 8000;
+            const float expectedInsuranceValue = 8800;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new List<InsuranceDto>();
             dto.Add(new InsuranceDto
             {
-                ProductId = 13
+                ProductId = 113
             });
             dto.Add(new InsuranceDto
             {
-                ProductId = 13
+                ProductId = 113
             });
             dto.Add(new InsuranceDto
             {
-                ProductId = 13
+                ProductId = 113
             });
             dto.Add(new InsuranceDto
             {
-                ProductId = 13
+                ProductId = 113
             });
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.ProductOrder(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+
+            List<string> typeList = new List<string> {
+                    StaticDataProvider.Laptops,
+                    StaticDataProvider.SmartPhones};
+
+            float insurance = 0f;
+            bool digitalCameraFound = false;
+
+            for (int i = 0; i < dto.Count; i++)
+            {
+                var productType = insuranceServiceMock.GetProductTypeAsync(dto[i]);
+                dto[i].ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+                dto[i].ProductTypeName = productType.Result.Result.ProductTypeName;
+
+                if (dto[i].ProductTypeHasInsurance)
+                {
+                    var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto[i]);
+                    dto[i].SalesPrice = salesPrice.Result.Result.SalesPrice;
+                    dto[i].InsuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto[i], typeList).Result.InsuranceValue;
+                }
+
+                insurance += dto[i].InsuranceValue;
+                if (!digitalCameraFound && dto[i].ProductTypeName.Equals(StaticDataProvider.DigitalCameras))
+                    insurance += StaticDataProvider.DigitalCamerasAdditionalInsuranceValue;
+            }
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insurance
                 );
         }
 
@@ -378,6 +637,7 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 2000;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new List<InsuranceDto>();
             dto.Add(new InsuranceDto { ProductId = 3 });
@@ -386,13 +646,37 @@ namespace Insurance.Tests
             dto.Add(new InsuranceDto { ProductId = 5 });
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.ProductOrder(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+
+            List<string> typeList = new List<string> {
+                    StaticDataProvider.Laptops,
+                    StaticDataProvider.SmartPhones};
+
+            float insurance = 0f;
+            bool digitalCameraFound = false;
+
+            for (int i = 0; i < dto.Count; i++)
+            {
+                var productType = insuranceServiceMock.GetProductTypeAsync(dto[i]);
+                dto[i].ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+                dto[i].ProductTypeName = productType.Result.Result.ProductTypeName;
+
+                if (dto[i].ProductTypeHasInsurance)
+                {
+                    var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto[i]);
+                    dto[i].SalesPrice = salesPrice.Result.Result.SalesPrice;
+                    dto[i].InsuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto[i], typeList).Result.InsuranceValue;
+                }
+
+                insurance += dto[i].InsuranceValue;
+                if (!digitalCameraFound && dto[i].ProductTypeName.Equals(StaticDataProvider.DigitalCameras))
+                    insurance += StaticDataProvider.DigitalCamerasAdditionalInsuranceValue;
+            }
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insurance
                 );
         }
 
@@ -401,6 +685,7 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 6000;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new List<InsuranceDto>();
             dto.Add(new InsuranceDto { ProductId = 32 });
@@ -409,13 +694,37 @@ namespace Insurance.Tests
             dto.Add(new InsuranceDto { ProductId = 52 });
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.ProductOrder(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+
+            List<string> typeList = new List<string> {
+                    StaticDataProvider.Laptops,
+                    StaticDataProvider.SmartPhones};
+
+            float insurance = 0f;
+            bool digitalCameraFound = false;
+
+            for (int i = 0; i < dto.Count; i++)
+            {
+                var productType = insuranceServiceMock.GetProductTypeAsync(dto[i]);
+                dto[i].ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+                dto[i].ProductTypeName = productType.Result.Result.ProductTypeName;
+
+                if (dto[i].ProductTypeHasInsurance)
+                {
+                    var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto[i]);
+                    dto[i].SalesPrice = salesPrice.Result.Result.SalesPrice;
+                    dto[i].InsuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto[i], typeList).Result.InsuranceValue;
+                }
+
+                insurance += dto[i].InsuranceValue;
+                if (!digitalCameraFound && dto[i].ProductTypeName.Equals(StaticDataProvider.DigitalCameras))
+                    insurance += StaticDataProvider.DigitalCamerasAdditionalInsuranceValue;
+            }
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insurance
                 );
         }
 
@@ -424,6 +733,7 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 10000;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new List<InsuranceDto>();
             dto.Add(new InsuranceDto
@@ -444,22 +754,47 @@ namespace Insurance.Tests
             });
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.ProductOrder(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+
+            List<string> typeList = new List<string> {
+                    StaticDataProvider.Laptops,
+                    StaticDataProvider.SmartPhones};
+
+            float insurance = 0f;
+            bool digitalCameraFound = false;
+
+            for (int i = 0; i < dto.Count; i++)
+            {
+                var productType = insuranceServiceMock.GetProductTypeAsync(dto[i]);
+                dto[i].ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+                dto[i].ProductTypeName = productType.Result.Result.ProductTypeName;
+
+                if (dto[i].ProductTypeHasInsurance)
+                {
+                    var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto[i]);
+                    dto[i].SalesPrice = salesPrice.Result.Result.SalesPrice;
+                    dto[i].InsuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto[i], typeList).Result.InsuranceValue;
+                }
+
+                insurance += dto[i].InsuranceValue;
+                if (!digitalCameraFound && dto[i].ProductTypeName.Equals(StaticDataProvider.DigitalCameras))
+                    insurance += StaticDataProvider.DigitalCamerasAdditionalInsuranceValue;
+            }
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insurance
                 );
         }
 
         //ToDo: add unit tests for range of items in an order
         [Fact]
-        public void Product_GivenOneOfEachTypeOfItemInOrder_ShouldAdd6500ToInsurance()
+        public void Product_GivenOneOfEachTypeOfItemInOrder_ShouldAdd15200ToInsurance()
         {
             //Arrange
-            const float expectedInsuranceValue = 15500;
+            const float expectedInsuranceValue = 15800;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new List<InsuranceDto>();
 
@@ -489,13 +824,40 @@ namespace Insurance.Tests
             dto.Add(new InsuranceDto { ProductId = 83 }); //0
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.ProductOrder(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+
+            List<string> typeList = new List<string> {
+                    StaticDataProvider.Laptops,
+                    StaticDataProvider.SmartPhones};
+
+            float insurance = 0f;
+            bool digitalCameraFound = false;
+
+            for (int i = 0; i < dto.Count; i++)
+            {
+                var productType = insuranceServiceMock.GetProductTypeAsync(dto[i]);
+                dto[i].ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+                dto[i].ProductTypeName = productType.Result.Result.ProductTypeName;
+
+                if (dto[i].ProductTypeHasInsurance)
+                {
+                    var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto[i]);
+                    dto[i].SalesPrice = salesPrice.Result.Result.SalesPrice;
+                    dto[i].InsuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto[i], typeList).Result.InsuranceValue;
+                }
+
+                insurance += dto[i].InsuranceValue;
+                if (!digitalCameraFound && dto[i].ProductTypeName.Equals(StaticDataProvider.DigitalCameras))
+                {
+                    digitalCameraFound = true;
+                    insurance += StaticDataProvider.DigitalCamerasAdditionalInsuranceValue;
+                }
+            }
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insurance
                 );
         }
 
@@ -505,6 +867,7 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 500;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new InsuranceDto
             {
@@ -512,13 +875,23 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.Product(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+            var productType = insuranceServiceMock.GetProductTypeAsync(dto);
+            dto.ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+            dto.ProductTypeName = productType.Result.Result.ProductTypeName;
+            var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto);
+            dto.SalesPrice = salesPrice.Result.Result.SalesPrice;
+            List<string> typeList = new List<string> {
+                    "Laptops",
+                    "Digital cameras",
+                    "Smartphones"};
+            var insuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto, typeList).Result.InsuranceValue;
+
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insuranceValue
                 );
         }
         [Fact]
@@ -526,6 +899,7 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 1500;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new InsuranceDto
             {
@@ -533,13 +907,23 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.Product(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+            var productType = insuranceServiceMock.GetProductTypeAsync(dto);
+            dto.ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+            dto.ProductTypeName = productType.Result.Result.ProductTypeName;
+            var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto);
+            dto.SalesPrice = salesPrice.Result.Result.SalesPrice;
+            List<string> typeList = new List<string> {
+                    "Laptops",
+                    "Digital cameras",
+                    "Smartphones"};
+            var insuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto, typeList).Result.InsuranceValue;
+
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insuranceValue
                 );
         }
         [Fact]
@@ -547,6 +931,7 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 2500;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new InsuranceDto
             {
@@ -554,35 +939,73 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.Product(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+            var productType = insuranceServiceMock.GetProductTypeAsync(dto);
+            dto.ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+            dto.ProductTypeName = productType.Result.Result.ProductTypeName;
+            var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto);
+            dto.SalesPrice = salesPrice.Result.Result.SalesPrice;
+            List<string> typeList = new List<string> {
+                    "Laptops",
+                    "Digital cameras",
+                    "Smartphones"};
+            var insuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto, typeList).Result.InsuranceValue;
+
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insuranceValue
                 );
         }
         [Fact]
         public void Product_GivenAtLEastOneDigitalCameraInOrder_ShouldAdd1500Plus500ToInsurance()
         {
             //Arrange
-            const float expectedInsuranceValue = 2500;
+            const float expectedInsuranceValue = 2000;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new List<InsuranceDto>();
             dto.Add(new InsuranceDto { ProductId = 12 }); //500
             dto.Add(new InsuranceDto { ProductId = 7 }); //0 + digital camera 500
-            dto.Add(new InsuranceDto { ProductId = 72 }); //1000 digital camera + 500
+            dto.Add(new InsuranceDto { ProductId = 72 }); //1000  
             dto.Add(new InsuranceDto { ProductId = 1 }); //0
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.ProductOrder(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+
+            List<string> typeList = new List<string> {
+                    StaticDataProvider.Laptops,
+                    StaticDataProvider.SmartPhones};
+
+            float insurance = 0f;
+            bool digitalCameraFound = false;
+
+            for (int i = 0; i < dto.Count; i++)
+            {
+                var productType = insuranceServiceMock.GetProductTypeAsync(dto[i]);
+                dto[i].ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+                dto[i].ProductTypeName = productType.Result.Result.ProductTypeName;
+
+                if (dto[i].ProductTypeHasInsurance)
+                {
+                    var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto[i]);
+                    dto[i].SalesPrice = salesPrice.Result.Result.SalesPrice;
+                    dto[i].InsuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto[i], typeList).Result.InsuranceValue;
+                }
+
+                insurance += dto[i].InsuranceValue;
+                if (!digitalCameraFound && dto[i].ProductTypeName.Equals(StaticDataProvider.DigitalCameras))
+                {
+                    digitalCameraFound = true;
+                    insurance += StaticDataProvider.DigitalCamerasAdditionalInsuranceValue;
+                }
+            }
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insurance
                 );
         }
 
@@ -592,6 +1015,7 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 0;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new InsuranceDto
             {
@@ -600,14 +1024,24 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            await sut.Surcharge(dto);
-            var result = sut.Product(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+            var productType = insuranceServiceMock.GetProductTypeAsync(dto);
+            dto.ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+            dto.ProductTypeName = productType.Result.Result.ProductTypeName;
+            insuranceServiceMock.AddSurchargeAsync(dto);
+            var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto);
+            dto.SalesPrice = salesPrice.Result.Result.SalesPrice;
+            List<string> typeList = new List<string> {
+                    "Laptops",
+                    "Digital cameras",
+                    "Smartphones"};
+            var insuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto, typeList).Result.InsuranceValue;
+
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insuranceValue
                 );
         }
 
@@ -616,6 +1050,7 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 1100;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new InsuranceDto
             {
@@ -624,14 +1059,24 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            await sut.Surcharge(dto);
-            var result = sut.Product(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+            var productType = insuranceServiceMock.GetProductTypeAsync(dto);
+            dto.ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+            dto.ProductTypeName = productType.Result.Result.ProductTypeName;
+            insuranceServiceMock.AddSurchargeAsync(dto);
+            var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto);
+            dto.SalesPrice = salesPrice.Result.Result.SalesPrice;
+            List<string> typeList = new List<string> {
+                    "Laptops",
+                    "Digital cameras",
+                    "Smartphones"};
+            var insuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto, typeList).Result.InsuranceValue;
+
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insuranceValue
                 );
         }
 
@@ -640,6 +1085,7 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 2200;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new InsuranceDto
             {
@@ -648,14 +1094,24 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            await sut.Surcharge(dto);
-            var result = sut.Product(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+            var productType = insuranceServiceMock.GetProductTypeAsync(dto);
+            dto.ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+            dto.ProductTypeName = productType.Result.Result.ProductTypeName;
+            insuranceServiceMock.AddSurchargeAsync(dto);
+            var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto);
+            dto.SalesPrice = salesPrice.Result.Result.SalesPrice;
+            List<string> typeList = new List<string> {
+                    "Laptops",
+                    "Digital cameras",
+                    "Smartphones"};
+            var insuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto, typeList).Result.InsuranceValue;
+
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insuranceValue
                 );
         }
 
@@ -665,6 +1121,7 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 0;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new InsuranceDto
             {
@@ -673,14 +1130,24 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            await sut.Surcharge(dto);
-            var result = sut.Product(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+            var productType = insuranceServiceMock.GetProductTypeAsync(dto);
+            dto.ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+            dto.ProductTypeName = productType.Result.Result.ProductTypeName;
+            insuranceServiceMock.AddSurchargeAsync(dto);
+            var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto);
+            dto.SalesPrice = salesPrice.Result.Result.SalesPrice;
+            List<string> typeList = new List<string> {
+                    "Laptops",
+                    "Digital cameras",
+                    "Smartphones"};
+            var insuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto, typeList).Result.InsuranceValue;
+
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insuranceValue
                 );
         }
         [Fact]
@@ -688,6 +1155,7 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 900;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new InsuranceDto
             {
@@ -696,14 +1164,24 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            await sut.Surcharge(dto);
-            var result = sut.Product(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+            var productType = insuranceServiceMock.GetProductTypeAsync(dto);
+            dto.ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+            dto.ProductTypeName = productType.Result.Result.ProductTypeName;
+            insuranceServiceMock.AddSurchargeAsync(dto);
+            var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto);
+            dto.SalesPrice = salesPrice.Result.Result.SalesPrice;
+            List<string> typeList = new List<string> {
+                    "Laptops",
+                    "Digital cameras",
+                    "Smartphones"};
+            var insuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto, typeList).Result.InsuranceValue;
+
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insuranceValue
                 );
         }
 
@@ -712,6 +1190,7 @@ namespace Insurance.Tests
         {
             //Arrange
             const float expectedInsuranceValue = 1800;
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new InsuranceDto
             {
@@ -720,22 +1199,33 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            await sut.Surcharge(dto);
-            var result = sut.Product(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+            var productType = insuranceServiceMock.GetProductTypeAsync(dto);
+            dto.ProductTypeHasInsurance = productType.Result.Result.ProductTypeHasInsurance;
+            dto.ProductTypeName = productType.Result.Result.ProductTypeName;
+            insuranceServiceMock.AddSurchargeAsync(dto);
+            var salesPrice = insuranceServiceMock.GetSalesPriceAsync(dto);
+            dto.SalesPrice = salesPrice.Result.Result.SalesPrice;
+            List<string> typeList = new List<string> {
+                    "Laptops",
+                    "Digital cameras",
+                    "Smartphones"};
+            var insuranceValue = insuranceServiceMock.CalculateInsuranceValue(dto, typeList).Result.InsuranceValue;
+
 
             //Assert
             Assert.Equal(
                 expected: expectedInsuranceValue,
-                actual: float.Parse(result.ToString())
+                actual: insuranceValue
                 );
         }
-             
+
         [Fact]
         public async void Product_GivenInvalidProductId_ShouldReturnError()
         {
             //Arrange
-            const string expected = "Product type could not be found";
+            const string expected = "Product could not be found";
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new InsuranceDto
             {
@@ -743,20 +1233,22 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            var result = sut.Product(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+            var productType = await insuranceServiceMock.GetProductTypeAsync(dto);
 
             //Assert
             Assert.Equal(
                 expected: expected,
-                actual: result.ToString()
+                actual: productType.ErrorMessage
                 );
         }
+
         [Fact]
-        public async void CalculateSurcharge_GivenInvalidProductId_ShouldReturnError()
+        public async void CalculateSurcharge_GivenInvalidProductId_ShouldReturnErrorr()
         {
             //Arrange
-            const string expected = "Product type could not be found";
+            const string expected = "Product could not be found";
+            var logger = new Mock<ILogger<InsuranceService>>();
 
             var dto = new InsuranceDto
             {
@@ -765,14 +1257,13 @@ namespace Insurance.Tests
             };
 
             //Act
-            var sut = new InsuranceController(InsuranceServiceMock.Object);
-            await sut.Surcharge(dto);
-            var result = sut.Product(dto).Result;
+            var insuranceServiceMock = new InsuranceService(logger.Object, new HttpClient { BaseAddress = new Uri("http://localhost:5002") });
+            var productType = await insuranceServiceMock.GetProductTypeAsync(dto);
 
             //Assert
             Assert.Equal(
                 expected: expected,
-                actual: result.ToString()
+                actual: productType.ErrorMessage
                 );
         }
 
@@ -817,7 +1308,28 @@ public class ControllerTestStartup
                         int productId = int.Parse((string)context.Request.RouteValues["id"]);
                         var products = new[]
                                           {
+                                 new
+                                {
+                                    id = 110,
+                                        name = "Test Product",
+                                        productTypeId = 1,
+                                        salesPrice = 250
+                                },
                                 new
+                                {
+                                   id = 112,
+                                        name = "Test Product",
+                                        productTypeId = 1,
+                                        salesPrice = 1250
+                                },
+                                new
+                                {
+                                    id = 113,
+                                        name = "Test Product",
+                                        productTypeId = 1,
+                                        salesPrice = 2250
+                                },
+                            new
                                 {
                                     id = 9,
                                         name = "Test Product",
@@ -1016,8 +1528,7 @@ public class ControllerTestStartup
 
                             }
                         }
-
-                        return context.Response.WriteAsync(JsonConvert.SerializeObject("Not found"));
+                        return context.Response.WriteAsync("");
                     }
                 );
                 ep.MapGet(
@@ -1263,7 +1774,7 @@ public class ControllerTestStartup
                             }
                         }
 
-                        return context.Response.WriteAsync(JsonConvert.SerializeObject("Not found"));
+                        return context.Response.WriteAsync("");
                     }
                 );
                 ep.MapGet(

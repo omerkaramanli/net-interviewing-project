@@ -75,7 +75,10 @@ namespace Insurance.Api.Controllers
 
                 insurance += toInsure[i].InsuranceValue;
                 if (!digitalCameraFound && toInsure[i].ProductTypeName.Equals(StaticDataProvider.DigitalCameras))
+                {
+                    digitalCameraFound = true;
                     insurance += StaticDataProvider.DigitalCamerasAdditionalInsuranceValue;
+                }
             }
 
             return Ok(insurance);
